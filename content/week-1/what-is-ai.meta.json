@@ -1,0 +1,24 @@
+{
+    "title": "What Is AI Really?",
+    "slug": "what-is-ai-really",
+    "week": 1,
+    "lesson": 1,
+    "duration": "25 min",
+    "level": "Beginner",
+    "type": "Conceptual Foundations",
+    "description": "Understand the difference between AI, Machine Learning, and Deep Learning — and learn how modern AI systems actually work.",
+    "objectives": [
+        "Understand AI vs ML vs Deep Learning",
+        "Learn how AI systems learn from data",
+        "Understand Narrow AI vs AGI",
+        "Learn the basic ML workflow",
+        "Build foundational AI vocabulary"
+    ],
+    "tags": [
+        "AI",
+        "Machine Learning",
+        "Deep Learning",
+        "Beginner",
+        "Foundations"
+    ]
+}

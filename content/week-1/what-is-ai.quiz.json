@@ -1,0 +1,55 @@
+{
+    "title": "What Is AI Really?",
+    "questions": [
+        {
+            "question": "What is the broadest field among these?",
+            "options": [
+                "Deep Learning",
+                "Machine Learning",
+                "Artificial Intelligence",
+                "Neural Networks"
+            ],
+            "answer": "Artificial Intelligence"
+        },
+        {
+            "question": "Machine Learning systems primarily improve by:",
+            "options": [
+                "Following fixed rules only",
+                "Learning patterns from data",
+                "Using human emotions",
+                "Replacing datasets"
+            ],
+            "answer": "Learning patterns from data"
+        },
+        {
+            "question": "Which of these is an example of Narrow AI?",
+            "options": [
+                "A fully conscious machine",
+                "An AGI researcher",
+                "A spam email classifier",
+                "Human intelligence"
+            ],
+            "answer": "A spam email classifier"
+        },
+        {
+            "question": "What is the purpose of model evaluation?",
+            "options": [
+                "To make GPUs faster",
+                "To test performance on unseen data",
+                "To remove datasets",
+                "To replace training"
+            ],
+            "answer": "To test performance on unseen data"
+        },
+        {
+            "question": "What problem occurs when a model memorizes training data but performs poorly on new data?",
+            "options": [
+                "Inference",
+                "Generalization",
+                "Overfitting",
+                "Tokenization"
+            ],
+            "answer": "Overfitting"
+        }
+    ]
+}
