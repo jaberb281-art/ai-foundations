@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
+import { getSupabasePublicConfig } from '@/lib/supabase/env'
 
 /*
   AUTH CALLBACK — handles BOTH auth flows:
@@ -15,7 +16,14 @@ export async function GET(request: NextRequest) {
     const requestUrl = new URL(request.url)
     const origin = requestUrl.origin
     const next = requestUrl.searchParams.get('next') ?? '/dashboard'
-    const destination = next.startsWith('/') ? next : '/dashboard'
+    const destination = next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard'
+    const supabaseConfig = getSupabasePublicConfig()
+
+    if (!supabaseConfig) {
+        return NextResponse.redirect(
+            `${origin}/login?error=${encodeURIComponent('Supabase auth is not configured yet.')}`
+        )
+    }
 
     // Params for magic link flow
     const token_hash = requestUrl.searchParams.get('token_hash')
@@ -27,8 +35,8 @@ export async function GET(request: NextRequest) {
     const cookieStore = await cookies()
 
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        supabaseConfig.url,
+        supabaseConfig.anonKey,
         {
             cookies: {
                 getAll() {

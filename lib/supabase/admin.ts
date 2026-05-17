@@ -1,8 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
+import { requireSupabasePublicConfig } from './env'
+import { requireSupabaseServiceRoleKey } from './server-env'
 
-export const createAdminClient = () =>
-    createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!,
-        { auth: { autoRefreshToken: false, persistSession: false } }
-    )
+export const createAdminClient = () => {
+    const { url } = requireSupabasePublicConfig()
+    const serviceRoleKey = requireSupabaseServiceRoleKey()
+
+    return createClient(url, serviceRoleKey, {
+        auth: { autoRefreshToken: false, persistSession: false },
+    })
+}

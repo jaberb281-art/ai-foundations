@@ -151,12 +151,16 @@ export default function HomePage() {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#080a12] text-white">
-      <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#050711]/75 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+    <main className="min-h-screen bg-[#080a12] text-white">
+      <nav className="fixed left-0 top-0 z-[100] w-full border-b border-white/10 bg-[#050711]/75 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-5">
+          {/* Logo */}
           <Link href="/" className="group flex items-center gap-3">
-            <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-white/[0.04] shadow-[0_0_30px_rgba(34,211,238,0.12)] transition group-hover:border-cyan-300/40">
+            <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-white/[0.04] shadow-[0_0_35px_rgba(34,211,238,0.12)]">
+              <div className="absolute inset-[-5px] rounded-[1.3rem] border border-cyan-400/20 animate-spin-slow" />
+
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/20 via-purple-500/10 to-cyan-400/20 blur-sm" />
+
               <Image
                 src="/logo.png"
                 alt="Theory Of You Academy"
@@ -168,37 +172,64 @@ export default function HomePage() {
             </div>
 
             <div className="hidden sm:block">
-              <p className="text-sm font-black tracking-tight text-white">Theory Of You</p>
-              <p className="text-xs font-medium text-white/45">AI Foundations</p>
+              <p className="text-sm font-black tracking-tight text-white">
+                Theory Of You
+              </p>
+              <p className="text-xs font-medium text-white/40">
+                AI Foundations
+              </p>
             </div>
           </Link>
 
-          <div className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1 backdrop-blur md:flex">
-            <a href="#curriculum" className="rounded-full px-4 py-2 text-sm font-medium text-white/60 transition hover:bg-white/10 hover:text-white">
+          {/* Navigation */}
+          <div className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] p-1 backdrop-blur md:flex">
+            <a
+              href="#curriculum"
+              className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
+            >
               Curriculum
             </a>
-            <a href="#projects" className="rounded-full px-4 py-2 text-sm font-medium text-white/60 transition hover:bg-white/10 hover:text-white">
+
+            <a
+              href="#projects"
+              className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
+            >
               Projects
             </a>
-            <a href="#waitlist" className="rounded-full px-4 py-2 text-sm font-medium text-white/60 transition hover:bg-white/10 hover:text-white">
+
+            <a
+              href="#waitlist"
+              className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
+            >
               Waitlist
             </a>
           </div>
 
+          {/* Actions */}
           <div className="flex items-center gap-3">
-            <Link href="/login" className="hidden text-sm font-semibold text-white/55 transition hover:text-white sm:inline">
+            <Link
+              href="/login"
+              className="hidden text-sm font-semibold text-white/50 transition hover:text-white sm:inline"
+            >
               Login
             </Link>
 
-            <a href="#waitlist" className="group relative overflow-hidden rounded-full bg-white px-5 py-2.5 text-sm font-black text-[#050711] shadow-[0_0_30px_rgba(255,255,255,0.12)] transition hover:scale-[1.03]">
+            <a
+              href="#waitlist"
+              className="group relative overflow-hidden rounded-full bg-white px-5 py-2.5 text-sm font-black text-[#050711] shadow-[0_0_30px_rgba(255,255,255,0.12)] transition hover:scale-[1.03]"
+            >
               <span className="relative z-10">Join Waitlist</span>
+
               <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-blue-200/70 to-transparent transition duration-700 group-hover:translate-x-full" />
             </a>
           </div>
         </div>
+
+        {/* Bottom glow line */}
+        <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" />
       </nav>
 
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden pt-20">
         <div className="absolute left-1/2 top-[-20rem] h-[42rem] w-[42rem] -translate-x-1/2 rounded-full bg-blue-600/20 blur-3xl" />
         <div className="absolute right-[-10rem] top-40 h-80 w-80 rounded-full bg-purple-600/20 blur-3xl" />
 

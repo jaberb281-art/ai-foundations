@@ -2,9 +2,27 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { getSupabasePublicConfig } from '@/lib/supabase/env'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Mail, Sparkles, ShieldCheck } from 'lucide-react'
+import { Mail, ShieldCheck } from 'lucide-react'
+
+function getSafeNextPath() {
+  const params = new URLSearchParams(window.location.search)
+  const next = params.get('next')
+
+  if (!next || !next.startsWith('/') || next.startsWith('//')) {
+    return '/dashboard'
+  }
+
+  return next
+}
+
+function getAuthCallbackUrl() {
+  const callbackUrl = new URL('/auth/callback', window.location.origin)
+  callbackUrl.searchParams.set('next', getSafeNextPath())
+  return callbackUrl.toString()
+}
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -12,10 +30,7 @@ export default function LoginPage() {
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
 
-  const isConfigured = Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
+  const isConfigured = Boolean(getSupabasePublicConfig())
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,7 +46,7 @@ export default function LoginPage() {
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      options: { emailRedirectTo: getAuthCallbackUrl() },
     })
 
     if (error) setError(error.message)
@@ -50,7 +65,7 @@ export default function LoginPage() {
 
     await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: getAuthCallbackUrl() },
     })
   }
 

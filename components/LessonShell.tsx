@@ -7,8 +7,6 @@ import { LessonMeta } from "@/lib/mdx/loader";
 /* ── Types ─────────────────────────────────────────────────── */
 interface Props {
     lesson: LessonMeta;
-    prev: LessonMeta | null;
-    next: LessonMeta | null;
     children: ReactNode;
 }
 
@@ -32,7 +30,7 @@ const difficultyStyle: Record<string, { bg: string; text: string; border: string
 };
 
 /* ── Component ─────────────────────────────────────────────── */
-export default function LessonShell({ lesson, prev, next, children }: Props) {
+export default function LessonShell({ lesson, children }: Props) {
     const [progress, setProgress] = useState(0);
     const [activeIdx, setActiveIdx] = useState(0);
     const [headings, setHeadings] = useState<{ id: string; text: string; level: number }[]>([]);

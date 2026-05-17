@@ -1,0 +1,212 @@
+---
+title: "How to Give Better Instructions"
+description: "Structure prompts with role, context, task, constraints, and output format."
+order: 2
+duration: 22
+difficulty: "Beginner"
+tags:
+  - Prompting
+  - Instructions
+  - AI Workflow
+objectives:
+  - Learn the main parts of a strong prompt
+  - Improve vague prompts with structure
+  - Practice adding constraints and output format
+---
+
+# How to Give Better Instructions
+
+> Better prompts usually come from better instructions, not longer instructions.
+
+## Lesson Goal
+
+By the end of this lesson, you will know a simple structure for writing better prompts:
+
+- role
+- context
+- task
+- constraints
+- output format
+
+You do not need to use every part every time. But when an AI answer feels weak, these parts help you improve it.
+
+---
+
+## Role
+
+The role tells the AI what kind of helper it should act like.
+
+Examples:
+
+- You are a patient tutor.
+- You are a career coach.
+- You are a code reviewer.
+- You are a beginner-friendly AI teacher.
+
+Role matters because it changes the style and focus of the answer.
+
+For example:
+
+> Explain this as a senior engineer.
+
+will usually feel different from:
+
+> Explain this as a patient tutor for a beginner.
+
+---
+
+## Context
+
+Context tells the AI the situation.
+
+Without context, the AI has to guess.
+
+Useful context might include:
+
+- your skill level
+- your goal
+- your audience
+- what you have already tried
+- what problem you are solving
+
+Example:
+
+> I am a beginner learning AI. I understand basic Python, but I do not know machine learning yet.
+
+This helps the AI choose the right level.
+
+---
+
+## Task
+
+The task tells the AI exactly what to do.
+
+Examples:
+
+- Explain this concept.
+- Turn these notes into a checklist.
+- Create five practice questions.
+- Rewrite this paragraph for beginners.
+- Compare these two options.
+
+A clear task prevents the AI from drifting.
+
+If you ask:
+
+> Help me with this.
+
+the AI has to guess what help means.
+
+If you ask:
+
+> Summarize this into five bullet points for a beginner.
+
+the task is clear.
+
+---
+
+## Constraints
+
+Constraints are limits or rules.
+
+They tell the AI what to avoid or respect.
+
+Examples:
+
+- Keep it under 150 words.
+- Avoid technical jargon.
+- Use simple examples.
+- Do not make assumptions.
+- Focus only on beginner concepts.
+
+Constraints are useful when the answer is too long, too advanced, too vague, or too broad.
+
+---
+
+## Output Format
+
+Output format tells the AI how to present the answer.
+
+Examples:
+
+- Use a table.
+- Use bullet points.
+- Give a step-by-step plan.
+- End with three quiz questions.
+- Use this format: Problem, Cause, Fix.
+
+Format matters because a good answer can still be hard to use if it is not organized.
+
+---
+
+## Before And After Prompt Example
+
+Weak prompt:
+
+> Help me study AI.
+
+Better prompt:
+
+> You are a patient AI tutor. I am a beginner learning AI Foundations. Create a 30-minute study plan for understanding how AI learns from data. Keep it practical, use simple language, and include a short quiz at the end.
+
+The better prompt includes:
+
+- role: patient AI tutor
+- context: beginner learning AI Foundations
+- task: create a 30-minute study plan
+- constraints: practical and simple language
+- output format: include a short quiz
+
+This gives the AI a much clearer target.
+
+---
+
+## Mini Exercise: Improve A Weak Prompt
+
+Weak prompt:
+
+> Write a caption.
+
+Improve it by adding:
+
+- role
+- context
+- task
+- constraints
+- output format
+
+Example improved version:
+
+> You are a social media copywriter. I am posting about a beginner AI course for developers. Write five Instagram captions that sound clear, helpful, and not hype-driven. Keep each caption under 140 characters.
+
+Now the AI has enough detail to produce something useful.
+
+---
+
+## Practical Prompt Template
+
+Use this structure when you are stuck:
+
+```text
+Role:
+You are a [kind of assistant].
+
+Context:
+I am trying to [goal]. My audience is [audience]. My constraints are [constraints].
+
+Task:
+Create [output] that helps me achieve [result].
+
+Format:
+Use [format].
+```
+
+You can change the labels, but the thinking pattern stays useful.
+
+---
+
+## Mini Reflection
+
+Which part do you usually forget when prompting AI: role, context, task, constraints, or output format?
+
+How could adding that part improve your next prompt?

@@ -7,6 +7,7 @@ import rehypeHighlight from "rehype-highlight";
 import { getLesson, getLessonsForWeek } from "@/lib/mdx/loader";
 import Quiz from "@/components/Quiz";
 import LessonShell from "@/components/LessonShell";
+import CompleteButton from "@/components/CompleteButton";
 import {
   Callout,
   InsightCard,
@@ -105,7 +106,7 @@ export default async function LessonPage({ params }: Props) {
   };
 
   return (
-    <LessonShell lesson={lesson} prev={prev} next={next}>
+    <LessonShell lesson={lesson}>
 
       {/* ── MDX body ─────────────────────────────────────────── */}
       <div className="lesson-prose">
@@ -125,6 +126,15 @@ export default async function LessonPage({ params }: Props) {
       {quizData && (
         <Quiz title={quizData.title} questions={quizData.questions} />
       )}
+
+      <div style={{ marginTop: "2rem" }}>
+        <CompleteButton
+          itemType="lesson"
+          week={week}
+          slug={lessonSlug}
+          label="Mark lesson complete"
+        />
+      </div>
 
       {/* ── Lesson navigation ────────────────────────────────── */}
       <nav aria-label="Lesson navigation" style={{ marginTop: "3.5rem" }}>
