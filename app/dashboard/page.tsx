@@ -199,7 +199,7 @@ export default function DashboardPage() {
                 href="/course/week-1/what-is-ai"
                 className="rounded-2xl bg-blue-600 px-5 py-3 text-center text-sm font-black text-white transition hover:bg-blue-500"
               >
-                Continue Learning
+                Start Week 1
               </Link>
               <Link
                 href="/course/week-1"
