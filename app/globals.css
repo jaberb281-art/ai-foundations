@@ -218,11 +218,13 @@ body {
   border-radius: var(--radius-lg);
   background: #080a10;
   border: 1px solid rgba(255, 255, 255, 0.06);
-  overflow-x: auto;
+  max-height: 28rem;
+  overflow: auto;
   font-family: var(--font-mono);
   font-size: 0.875rem;
   line-height: 1.7;
   box-shadow: var(--shadow-card);
+  scrollbar-gutter: stable;
 }
 
 .lesson-prose pre code {
@@ -231,6 +233,14 @@ body {
   padding: 0;
   border: none;
   font-size: inherit;
+  white-space: pre;
+}
+
+@media (max-width: 640px) {
+  .lesson-prose pre {
+    padding: 1rem;
+    font-size: 0.8125rem;
+  }
 }
 
 .lesson-prose hr {
