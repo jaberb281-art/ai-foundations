@@ -32,6 +32,30 @@ export async function getUserProgress(userId: string) {
     .returns<LearningProgress[]>()
 }
 
+export async function getAuthenticatedUserId() {
+  const supabase = await createServerClient()
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser()
+
+  if (error || !user) {
+    return null
+  }
+
+  return user.id
+}
+
+export async function getAuthenticatedUserProgress() {
+  const userId = await getAuthenticatedUserId()
+
+  if (!userId) {
+    return { data: [], error: null }
+  }
+
+  return getUserProgress(userId)
+}
+
 export async function markProgressComplete({
   userId,
   itemType,

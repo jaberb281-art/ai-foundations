@@ -1,11 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import {
   getUserProgress,
+  getAuthenticatedUserId,
   markProgressComplete,
   markProgressIncomplete,
   type ProgressItemType,
 } from '@/lib/progress'
-import { createServerClient } from '@/lib/supabase/server'
 
 const itemTypes: ProgressItemType[] = ['lesson', 'quiz', 'project']
 
@@ -53,20 +53,6 @@ function validateProgressInput(body: unknown) {
       completed,
     },
   }
-}
-
-async function getAuthenticatedUserId() {
-  const supabase = await createServerClient()
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
-
-  if (error || !user) {
-    return null
-  }
-
-  return user.id
 }
 
 export async function GET(request: NextRequest) {
