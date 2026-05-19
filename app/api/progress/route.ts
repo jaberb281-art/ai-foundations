@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
+import { COURSE_WEEKS, getCourseItemProgressSlug } from '@/lib/course/structure'
 import {
   getUserProgress,
   getAuthenticatedUserId,
@@ -6,6 +7,7 @@ import {
   markProgressIncomplete,
   type ProgressItemType,
 } from '@/lib/progress'
+import { getCompletedProgressKeys, isWeekUnlocked } from '@/lib/course/progression'
 
 const itemTypes: ProgressItemType[] = ['lesson', 'quiz', 'project']
 
@@ -53,6 +55,21 @@ function validateProgressInput(body: unknown) {
       completed,
     },
   }
+}
+
+function isCompletableCourseItem(itemType: ProgressItemType, week: string, slug: string) {
+  const weekNumber = Number.parseInt(week.replace('week-', ''), 10)
+  const courseWeek = COURSE_WEEKS.find((item) => item.week === weekNumber)
+
+  return Boolean(
+    courseWeek?.items.some(
+      (item) =>
+        item.kind === itemType &&
+        item.available &&
+        item.href &&
+        getCourseItemProgressSlug(item) === slug
+    )
+  )
 }
 
 export async function GET(request: NextRequest) {
@@ -110,6 +127,30 @@ export async function POST(request: NextRequest) {
 
   if ('error' in result) {
     return NextResponse.json({ error: result.error }, { status: 400 })
+  }
+
+  if (result.data.completed) {
+    if (!isCompletableCourseItem(result.data.itemType, result.data.week, result.data.slug)) {
+      return NextResponse.json(
+        { error: 'This course item is not available to complete yet.' },
+        { status: 403 }
+      )
+    }
+
+    const { data: existingProgress, error: progressError } = await getUserProgress(userId)
+
+    if (progressError) {
+      return NextResponse.json({ error: progressError.message }, { status: 500 })
+    }
+
+    const completedKeys = getCompletedProgressKeys(existingProgress)
+
+    if (!isWeekUnlocked(result.data.week, completedKeys)) {
+      return NextResponse.json(
+        { error: 'Complete the previous week before marking this item complete.' },
+        { status: 403 }
+      )
+    }
   }
 
   const mutation = result.data.completed ? markProgressComplete : markProgressIncomplete

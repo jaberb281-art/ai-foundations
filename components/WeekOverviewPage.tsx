@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import VideoLessonCard from '@/components/VideoLessonCard'
+import LockedCourseState from '@/components/LockedCourseState'
 import {
   CourseItem,
   CourseWeek,
@@ -8,6 +9,12 @@ import {
 } from '@/lib/course/structure'
 import { getAuthenticatedUserProgress } from '@/lib/progress'
 import { WeekOverview } from '@/lib/course/week-overviews'
+import {
+  getCompletedProgressKeys,
+  getWeekCompletionSummary,
+  getWeekStatus,
+  isWeekUnlocked,
+} from '@/lib/course/progression'
 
 type WeekOverviewPageProps = {
   courseWeek: CourseWeek
@@ -67,11 +74,13 @@ function LessonCard({
   description,
   index,
   completed,
+  locked,
 }: {
   item: CourseItem
   description: string
   index: number
   completed: boolean
+  locked: boolean
 }) {
   const content = (
     <>
@@ -84,8 +93,8 @@ function LessonCard({
             <h3 className="text-lg font-black tracking-tight text-white">{item.title}</h3>
             <StatusPill
               completed={completed}
-              label={item.available ? 'Available' : 'Coming soon'}
-              preview={!item.available}
+              label={locked ? 'Locked' : item.available ? 'Available' : 'Coming soon'}
+              preview={locked || !item.available}
             />
           </div>
           <p className="mt-2 text-sm leading-6 text-slate-300">{description}</p>
@@ -94,7 +103,7 @@ function LessonCard({
     </>
   )
 
-  if (item.href && item.available) {
+  if (item.href && item.available && !locked) {
     return (
       <Link
         href={item.href}
@@ -120,6 +129,7 @@ function ActionCard({
   href,
   completed,
   disabledLabel,
+  locked,
 }: {
   tone: 'cyan' | 'violet'
   eyebrow: string
@@ -128,6 +138,7 @@ function ActionCard({
   href?: string
   completed?: boolean
   disabledLabel?: string
+  locked?: boolean
 }) {
   const toneClasses =
     tone === 'cyan'
@@ -142,18 +153,24 @@ function ActionCard({
           <p className={`text-sm font-black uppercase tracking-[0.18em] ${tone === 'cyan' ? 'text-cyan-300' : 'text-violet-300'}`}>
             {eyebrow}
           </p>
-          {completed ? <CheckIcon /> : disabledLabel ? <StatusPill label={disabledLabel} preview /> : null}
+          {completed ? (
+            <CheckIcon />
+          ) : locked ? (
+            <StatusPill label="Locked" preview />
+          ) : disabledLabel ? (
+            <StatusPill label={disabledLabel} preview />
+          ) : null}
         </div>
         <h3 className="mt-4 text-2xl font-black tracking-tight text-white">{title}</h3>
         <p className="mt-3 text-sm leading-6 text-slate-300">{description}</p>
         <p className={`mt-5 text-sm font-black transition ${tone === 'cyan' ? 'text-cyan-200' : 'text-violet-200'}`}>
-          {href ? (completed ? 'Review again' : 'Open') : disabledLabel}
+          {locked ? 'Complete previous week first' : href ? (completed ? 'Review again' : 'Open') : disabledLabel}
         </p>
       </div>
     </>
   )
 
-  if (href) {
+  if (href && !locked) {
     return (
       <Link
         href={href}
@@ -177,22 +194,22 @@ export default async function WeekOverviewPage({
 }: WeekOverviewPageProps) {
   const { data: progressRows } = await getAuthenticatedUserProgress()
   const weekSlug = `week-${courseWeek.week}`
-  const completedKeys = progressRows
-    .filter((progress) => progress.completed)
-    .map((progress) => getProgressKey(progress.item_type, progress.week, progress.slug))
+  const completedKeys = getCompletedProgressKeys(progressRows)
+  const unlocked = isWeekUnlocked(courseWeek.week, completedKeys)
+  const status = getWeekStatus(courseWeek.week, completedKeys)
+  const summary = getWeekCompletionSummary(courseWeek.week, completedKeys)
+
+  if (!unlocked) {
+    return <LockedCourseState week={courseWeek.week} title={`${overview.label} is locked`} />
+  }
 
   const lessons = courseWeek.items.filter((item) => item.kind === 'lesson')
   const quiz = courseWeek.items.find((item) => item.kind === 'quiz')
   const project = courseWeek.items.find((item) => item.kind === 'project')
   const firstIncompleteLesson = lessons.find((item) => item.available && !isCompleted(item, weekSlug, completedKeys))
   const startHref =
-    firstIncompleteLesson?.href ?? quiz?.href ?? project?.href ?? courseWeek.overviewHref
-  const startLabel = courseWeek.week <= 3 ? 'Start or continue' : 'Open project'
-
-  const completedCount = courseWeek.items.filter((item) =>
-    isCompleted(item, weekSlug, completedKeys)
-  ).length
-  const availableCount = courseWeek.items.filter((item) => item.available).length
+    firstIncompleteLesson?.href ?? (quiz && !isCompleted(quiz, weekSlug, completedKeys) ? quiz.href : undefined) ?? project?.href ?? courseWeek.overviewHref
+  const startLabel = status === 'Completed' ? 'Review completed week' : 'Start or continue'
 
   return (
     <main className="min-h-screen bg-[#07090f] text-white">
@@ -208,7 +225,7 @@ export default async function WeekOverviewPage({
                 <p className="text-sm font-black uppercase tracking-[0.2em] text-cyan-300">
                   {overview.label}
                 </p>
-                <StatusPill label={overview.status} preview={overview.status === 'Preview'} />
+                <StatusPill label={status} preview={status === 'Preview'} completed={status === 'Completed'} />
               </div>
               <h1 className="mt-4 text-4xl font-black tracking-tight sm:text-6xl">
                 {overview.title}
@@ -258,7 +275,7 @@ export default async function WeekOverviewPage({
               <h2 className="mt-2 text-2xl font-black tracking-tight">Module path</h2>
             </div>
             <p className="text-sm font-bold text-slate-300">
-              {completedCount} / {availableCount} completed
+              {summary.completed} / {summary.total} completed
             </p>
           </div>
 
@@ -270,6 +287,7 @@ export default async function WeekOverviewPage({
                 index={index}
                 description={overview.lessons[item.slug ?? ''] ?? 'Lesson details coming soon.'}
                 completed={isCompleted(item, weekSlug, completedKeys)}
+                locked={false}
               />
             ))}
           </div>
@@ -279,11 +297,12 @@ export default async function WeekOverviewPage({
           {quiz ? (
             <ActionCard
               tone="violet"
-              eyebrow="Self-check"
+              eyebrow={courseWeek.week === 5 ? 'Final reflection' : 'Self-check'}
               title={overview.quiz?.title ?? quiz.title}
               description={overview.quiz?.description ?? 'Review the key ideas from this week.'}
               href={quiz.href}
               completed={isCompleted(quiz, weekSlug, completedKeys)}
+              locked={false}
             />
           ) : (
             <ActionCard
@@ -303,6 +322,7 @@ export default async function WeekOverviewPage({
               description={overview.project.description}
               href={project.href}
               completed={isCompleted(project, weekSlug, completedKeys)}
+              locked={false}
             />
           )}
         </div>

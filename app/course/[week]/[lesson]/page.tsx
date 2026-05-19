@@ -11,9 +11,11 @@ import {
   getProgressKey,
 } from '@/lib/course/structure'
 import { getAuthenticatedUserProgress } from '@/lib/progress'
+import { getCompletedProgressKeys, isWeekUnlocked } from '@/lib/course/progression'
 import Quiz from '@/components/Quiz'
 import LessonShell from '@/components/LessonShell'
 import CompleteButton from '@/components/CompleteButton'
+import LockedCourseState from '@/components/LockedCourseState'
 import {
   Callout,
   InsightCard,
@@ -95,9 +97,12 @@ export default async function LessonPage({ params }: Props) {
   const lessonPosition = getLessonPosition(courseWeek, lessonSlug)
   const lessonNavigation = getLessonNavigation(courseWeek, lessonSlug)
   const { data: progressRows } = await getAuthenticatedUserProgress()
-  const completedProgressKeys = progressRows
-    .filter((progress) => progress.completed)
-    .map((progress) => getProgressKey(progress.item_type, progress.week, progress.slug))
+  const completedProgressKeys = getCompletedProgressKeys(progressRows)
+
+  if (!isWeekUnlocked(weekNumber, completedProgressKeys)) {
+    return <LockedCourseState week={weekNumber} title={`Week ${weekNumber} lesson is locked`} />
+  }
+
   const currentLessonCompleted = completedProgressKeys.includes(
     getProgressKey('lesson', week, lessonSlug)
   )

@@ -20,59 +20,66 @@ type WaitlistState = 'idle' | 'loading' | 'success' | 'error'
 const roadmap = [
   {
     step: '01',
-    title: 'Think like an AI engineer',
-    text: 'Understand AI, ML, deep learning, datasets, training, and inference without hype.',
+    title: 'AI Foundations',
+    text: 'Understand what AI is, how it learns, and how to think clearly while using AI tools.',
   },
   {
     step: '02',
-    title: 'Work with real data',
-    text: 'Clean datasets, explore patterns, visualize signals, and prepare data for models.',
+    title: 'Prompt Engineering Basics',
+    text: 'Learn how to give clearer instructions, avoid common mistakes, and build reusable prompts.',
   },
   {
     step: '03',
-    title: 'Train your first models',
-    text: 'Build regression and classification models, then evaluate them properly.',
+    title: 'AI Tools & Workflows',
+    text: 'Choose the right AI tool, build simple workflows, and turn AI output into useful work.',
   },
   {
     step: '04',
-    title: 'Enter deep learning',
-    text: 'Learn neural networks, PyTorch basics, and the mental model behind modern AI.',
+    title: 'Building With AI',
+    text: 'Find a real user problem, design one useful AI feature, and plan a simple product.',
   },
   {
     step: '05',
-    title: 'Ship a portfolio project',
-    text: 'Finish with a real project you can share on GitHub and explain with confidence.',
+    title: 'Final AI Project',
+    text: 'Prepare a portfolio-ready AI project case study with a clear problem, process, and result.',
   },
 ]
 
 const projects = [
   {
-    title: 'Spam classifier',
-    tag: 'Classification',
-    text: 'Train a model to detect spam messages and understand how AI separates signal from noise.',
+    title: 'AI study assistant',
+    tag: 'Week 1',
+    text: 'Build a reusable assistant prompt that explains, quizzes, corrects, and plans your next study step.',
     icon: MailWarning,
     badgeIcon: ShieldCheck,
   },
   {
-    title: 'House price predictor',
-    tag: 'Regression',
-    text: 'Predict prices using real features, patterns, and evaluation metrics.',
+    title: 'Prompt pack',
+    tag: 'Week 2',
+    text: 'Create a small reusable prompt pack for one real-life use case.',
     icon: Home,
     badgeIcon: TrendingUp,
   },
   {
-    title: 'Image classifier',
-    tag: 'Computer vision',
-    text: 'Build your first visual model and learn how machines interpret images.',
+    title: 'AI content workflow',
+    tag: 'Week 3',
+    text: 'Turn one idea into a useful content draft with a repeatable AI workflow.',
     icon: ImageIcon,
     badgeIcon: ScanLine,
   },
   {
-    title: 'Recommendation system',
-    tag: 'Ranking system',
-    text: 'Create a simple recommendation engine using user behavior and similarity logic.',
+    title: 'AI mini product plan',
+    tag: 'Week 4',
+    text: 'Shape one user problem into a simple AI-powered product plan.',
     icon: Network,
     badgeIcon: Sparkles,
+  },
+  {
+    title: 'Final portfolio case study',
+    tag: 'Week 5',
+    text: 'Present your final AI project with a clear problem, process, output, and reflection.',
+    icon: MailWarning,
+    badgeIcon: ShieldCheck,
   },
 ]
 
@@ -142,7 +149,7 @@ export default function HomePage() {
       }
 
       setState('success')
-      setMessage('You are on the founding waitlist. Week 1 updates are coming soon 🚀')
+      setMessage('You are on the founding waitlist. We will send launch and course updates.')
       setEmail('')
     } catch {
       setState('error')
@@ -237,7 +244,7 @@ export default function HomePage() {
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/25 bg-blue-500/10 px-4 py-2 text-xs font-semibold text-blue-200">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              Founding waitlist now open
+              AI Foundations is ready for MVP learners
             </div>
 
             <h1 className="max-w-4xl text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
@@ -245,7 +252,7 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">
-              AI Foundations is a free 5-week practical course for beginner developers who want to understand machine learning, deep learning, and modern AI workflows without drowning in hype.
+              AI Foundations is a free 5-week practical course for learners who want to understand AI, write better prompts, build useful workflows, and finish a portfolio-ready project.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -260,7 +267,7 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/55">
               <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">Free forever</span>
               <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">No credit card</span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">Python friendly</span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">Beginner friendly</span>
             </div>
           </div>
 
@@ -281,7 +288,7 @@ export default function HomePage() {
               Five weeks. One clear path.
             </h2>
             <p className="mt-4 text-white/60">
-              The first public release will focus on fundamentals, hands-on notebooks, quizzes, and portfolio projects.
+              Follow a complete path of short lessons, self-checks, and projects across five practical weeks.
             </p>
           </div>
 
@@ -312,13 +319,13 @@ export default function HomePage() {
                 Build things that prove you learned.
               </h2>
               <p className="mt-5 text-lg leading-8 text-white/60">
-                The goal is not passive watching. The goal is working projects, GitHub proof, and confidence.
+                The goal is not passive watching. The goal is clear practice, useful outputs, and confidence.
               </p>
 
               <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-5">
                 <p className="text-sm font-bold text-white">Project-first learning</p>
                 <p className="mt-2 text-sm leading-6 text-white/50">
-                  Every project teaches one real AI capability: classification, regression, vision, or recommendation logic.
+                  Every project turns the week into something concrete: a study assistant, prompt pack, workflow, product plan, or final case study.
                 </p>
               </div>
             </div>

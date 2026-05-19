@@ -1,60 +1,36 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
+import { COURSE_WEEKS } from '@/lib/course/structure'
+import { getAuthenticatedUserProgress } from '@/lib/progress'
+import {
+  getCompletedProgressKeys,
+  getNextRequiredItem,
+  getWeekCompletionSummary,
+  getWeekStatus,
+} from '@/lib/course/progression'
 
-const weeks = [
-  {
-    week: '01',
-    title: 'AI Foundations',
-    text: '3 lessons + 1 project + quiz on what AI is, how it learns, and how to think clearly with AI tools.',
-    status: 'Active',
-    available: true,
-    overviewHref: '/course/week-1',
-    lessonHref: '/course/week-1/what-is-ai',
-    projectHref: '/course/week-1/project',
-    quizHref: '/course/week-1/quiz',
-  },
-  {
-    week: '02',
-    title: 'Prompt Engineering Basics',
-    text: '3 lessons + 1 project + quiz on clear instructions, prompt structure, and common prompting mistakes.',
-    status: 'Active',
-    available: true,
-    overviewHref: '/course/week-2',
-    lessonHref: '/course/week-2/what-is-prompting',
-    projectHref: '/course/week-2/project',
-    quizHref: '/course/week-2/quiz',
-  },
-  {
-    week: '03',
-    title: 'AI Tools & Workflows',
-    text: '3 lessons + 1 project + quiz on choosing tools, building workflows, and improving AI output.',
-    status: 'Active',
-    available: true,
-    overviewHref: '/course/week-3',
-    lessonHref: '/course/week-3/choosing-the-right-ai-tool',
-    projectHref: '/course/week-3/project',
-    quizHref: '/course/week-3/quiz',
-  },
-  {
-    week: '04',
-    title: 'Building With AI',
-    text: 'Turn ideas into simple AI-powered product plans.',
-    status: 'Preview',
-    preview: true,
-    overviewHref: '/course/week-4',
-    projectHref: '/course/week-4/project',
-  },
-  {
-    week: '05',
-    title: 'Final AI Project',
-    text: 'Create a portfolio-ready AI project case study.',
-    status: 'Preview',
-    preview: true,
-    overviewHref: '/course/week-5',
-    projectHref: '/course/week-5/project',
-  },
-]
+export const metadata: Metadata = {
+  title: 'AI Foundations Course | Theory Of You Academy',
+  description:
+    'Continue the 5-week AI Foundations course with lessons, self-checks, projects, and locked progression.',
+}
 
-export default function CoursePage() {
+function getWeekText(week: number) {
+  const descriptions: Record<number, string> = {
+    1: '3 lessons + 1 project + quiz on what AI is, how it learns, and how to think clearly with AI tools.',
+    2: '3 lessons + 1 project + quiz on clear instructions, prompt structure, and common prompting mistakes.',
+    3: '3 lessons + 1 project + quiz on choosing tools, building workflows, and improving AI output.',
+    4: 'Turn ideas into simple AI-powered product plans.',
+    5: 'Create a portfolio-ready AI project case study.',
+  }
+
+  return descriptions[week] ?? 'Continue your AI Foundations learning path.'
+}
+
+export default async function CoursePage() {
+  const { data: progressRows } = await getAuthenticatedUserProgress()
+  const completedKeys = getCompletedProgressKeys(progressRows)
+
   return (
     <main className="min-h-screen bg-[#07090f] text-white">
       <section className="relative overflow-hidden border-b border-white/10">
@@ -83,7 +59,7 @@ export default function CoursePage() {
               href="/course/week-1"
               className="rounded-2xl bg-blue-600 px-6 py-4 text-center text-sm font-black text-white shadow-xl shadow-blue-600/25 transition hover:bg-blue-500"
             >
-              Start Week 1
+              Continue learning
             </Link>
             <Link
               href="/course/week-1/what-is-ai"
@@ -97,66 +73,79 @@ export default function CoursePage() {
 
       <section className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
         <div className="grid gap-5 lg:grid-cols-5">
-          {weeks.map((week) => (
-            <article
-              key={week.week}
-              className={`relative overflow-hidden rounded-[1.75rem] border p-6 ${
-                week.available
-                  ? 'border-blue-400/30 bg-[#0d1220] shadow-2xl shadow-blue-950/25'
-                  : 'border-white/10 bg-[#0b0f1a]'
-              }`}
-            >
-              {week.available && (
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-400/10" />
-              )}
-              <div className="relative">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm font-black text-blue-200">WEEK {week.week}</span>
-                  <span
-                    className={`rounded-full border px-3 py-1 text-xs font-bold ${
-                      week.available
-                        ? 'border-emerald-400/25 bg-emerald-500/10 text-emerald-200'
-                        : 'border-cyan-300/25 bg-cyan-500/10 text-cyan-100'
-                    }`}
-                  >
-                    {week.status}
-                  </span>
-                </div>
-                <h2 className="mt-5 text-xl font-black tracking-tight">{week.title}</h2>
-                <p className="mt-3 text-sm leading-6 text-white/65">{week.text}</p>
+          {COURSE_WEEKS.map((week) => {
+            const status = getWeekStatus(week.week, completedKeys)
+            const summary = getWeekCompletionSummary(week.week, completedKeys)
+            const nextItem = getNextRequiredItem(week.week, completedKeys)
+            const isLocked = status === 'Locked'
+            const href = isLocked ? undefined : week.overviewHref
+            const cta =
+              status === 'Completed'
+                ? 'Review completed week'
+                : status === 'Locked'
+                  ? `Complete Week ${week.week - 1} first`
+                  : nextItem
+                    ? week.week === 1 && summary.completed === 0
+                      ? 'Start'
+                      : 'Continue'
+                    : 'Open preview'
 
-                {week.available ? (
+            return (
+              <article
+                key={week.week}
+                className={`relative overflow-hidden rounded-[1.75rem] border p-6 ${
+                  isLocked
+                    ? 'border-white/10 bg-[#0b0f1a] opacity-75'
+                    : 'border-blue-400/30 bg-[#0d1220] shadow-2xl shadow-blue-950/25'
+                }`}
+              >
+                {!isLocked && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-cyan-400/10" />
+                )}
+                <div className="relative">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-black text-blue-200">
+                      WEEK {String(week.week).padStart(2, '0')}
+                    </span>
+                    <span
+                      className={`rounded-full border px-3 py-1 text-xs font-bold ${
+                        status === 'Completed'
+                          ? 'border-emerald-400/25 bg-emerald-500/10 text-emerald-200'
+                          : status === 'Locked'
+                            ? 'border-white/10 bg-white/[0.04] text-white/65'
+                            : status === 'Preview'
+                              ? 'border-cyan-300/25 bg-cyan-500/10 text-cyan-100'
+                              : 'border-blue-300/25 bg-blue-500/10 text-blue-100'
+                      }`}
+                    >
+                      {status}
+                    </span>
+                  </div>
+                  <h2 className="mt-5 text-xl font-black tracking-tight">{week.title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-white/65">{getWeekText(week.week)}</p>
+                  <p className="mt-4 text-sm font-bold text-white/70">
+                    {summary.completed} / {summary.total} completed
+                  </p>
+
                   <div className="mt-6 flex flex-col gap-2">
-                    <Link className="text-sm font-bold text-cyan-200 transition hover:text-white" href={week.overviewHref}>
-                      Week overview
-                    </Link>
-                    <Link className="text-sm font-bold text-cyan-200 transition hover:text-white" href={week.lessonHref}>
-                      First lesson
-                    </Link>
-                    <Link className="text-sm font-bold text-cyan-200 transition hover:text-white" href={week.projectHref}>
-                      Week project
-                    </Link>
-                    {week.quizHref && (
-                      <Link className="text-sm font-bold text-cyan-200 transition hover:text-white" href={week.quizHref}>
-                        Self-check quiz
+                    {href ? (
+                      <Link className="text-sm font-bold text-cyan-200 transition hover:text-white" href={href}>
+                        {cta}
+                      </Link>
+                    ) : (
+                      <p className="text-sm font-bold text-white/45">{cta}</p>
+                    )}
+
+                    {!isLocked && nextItem && (
+                      <Link className="text-sm font-bold text-cyan-200 transition hover:text-white" href={nextItem.href}>
+                        Next step: {nextItem.title}
                       </Link>
                     )}
                   </div>
-                ) : week.preview ? (
-                  <div className="mt-6 flex flex-col gap-2">
-                    <Link className="text-sm font-bold text-cyan-200 transition hover:text-white" href={week.overviewHref}>
-                      Week preview
-                    </Link>
-                    <Link className="text-sm font-bold text-cyan-200 transition hover:text-white" href={week.projectHref}>
-                      Open project
-                    </Link>
-                  </div>
-                ) : (
-                  <p className="mt-6 text-sm font-semibold text-white/65">Locked for now</p>
-                )}
-              </div>
-            </article>
-          ))}
+                </div>
+              </article>
+            )
+          })}
         </div>
       </section>
     </main>

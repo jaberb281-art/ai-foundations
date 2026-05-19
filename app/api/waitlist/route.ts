@@ -25,11 +25,9 @@ export async function POST(request: Request) {
       process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
 
     if (!hasSupabase) {
-      console.warn('Waitlist signup received, but Supabase env vars are missing:', email)
       return NextResponse.json({
         ok: true,
         message: 'You are on the founding waitlist.',
-        dev_note: 'Supabase is not configured yet, so this signup was not persisted.',
       })
     }
 
@@ -48,7 +46,7 @@ export async function POST(request: Request) {
       )
 
     if (error) {
-      console.error('Waitlist signup error:', error)
+      console.error('Waitlist signup failed.')
       return NextResponse.json(
         { ok: false, message: 'Could not join the waitlist. Please try again.' },
         { status: 500 }
@@ -56,8 +54,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ ok: true, message: 'You are on the founding waitlist.' })
-  } catch (error) {
-    console.error('Waitlist route error:', error)
+  } catch {
+    console.error('Waitlist route failed.')
     return NextResponse.json(
       { ok: false, message: 'Something went wrong. Please try again.' },
       { status: 500 }

@@ -119,13 +119,13 @@ export const WEEK_OVERVIEWS: Record<number, WeekOverview> = {
   },
   4: {
     week: 4,
-    label: 'Week 4 Preview',
+    label: 'Week 4',
     title: 'Building With AI',
-    status: 'Preview',
+    status: 'Active',
     description:
-      'Preview how to turn an idea into a simple AI-powered product concept and define the first useful version.',
+      'Turn a real user problem into a simple AI-powered product concept and define the first useful version.',
     outcome:
-      'The project is available now; lessons and self-check content will arrive when this module opens fully.',
+      'You will learn how to identify a real problem, design one useful AI feature, and shape it into a simple product plan.',
     video: {
       title: 'Week 4 Video Lesson',
       description:
@@ -140,6 +140,10 @@ export const WEEK_OVERVIEWS: Record<number, WeekOverview> = {
       'planning-a-simple-ai-product':
         'Shape a small product idea into a clear first version that could actually be built.',
     },
+    quiz: {
+      title: 'Week 4 Self-Check',
+      description: 'Review problem-first thinking, AI feature design, and simple product planning.',
+    },
     project: {
       title: 'Build Your First AI Mini Product Plan',
       description: 'Create a simple AI product plan for one real user problem.',
@@ -147,13 +151,13 @@ export const WEEK_OVERVIEWS: Record<number, WeekOverview> = {
   },
   5: {
     week: 5,
-    label: 'Week 5 Preview',
+    label: 'Week 5',
     title: 'Final AI Project',
-    status: 'Preview',
+    status: 'Active',
     description:
-      'Preview the final portfolio project where you combine the course into one clear AI-powered project case study.',
+      'Combine the course into one clear AI-powered project case study that is useful, honest, and portfolio-ready.',
     outcome:
-      'The final project is available now; lessons and reflection content will arrive when this module opens fully.',
+      'You will choose a realistic final project, explain your process clearly, and prepare your AI work as a portfolio-ready case study.',
     video: {
       title: 'Week 5 Video Lesson',
       description:
@@ -167,6 +171,10 @@ export const WEEK_OVERVIEWS: Record<number, WeekOverview> = {
         'Turn your process into a clear story about the problem, workflow, output, and result.',
       'presenting-your-ai-work':
         'Learn how to explain your AI project in a way that feels useful and credible.',
+    },
+    quiz: {
+      title: 'Week 5 Final Reflection',
+      description: 'Review your final AI project and prepare it as a portfolio-ready case study.',
     },
     project: {
       title: 'Create Your Final AI Portfolio Project',

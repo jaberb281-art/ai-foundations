@@ -62,9 +62,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(`${origin}${destination}`)
         }
 
-        console.error('[auth/callback] verifyOtp error:', error.message)
+        console.error('[auth/callback] verifyOtp failed.')
         return NextResponse.redirect(
-            `${origin}/login?error=${encodeURIComponent(error.message)}`
+            `${origin}/login?error=${encodeURIComponent('Authentication failed. Please try again.')}`
         )
     }
 
@@ -76,9 +76,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(`${origin}${destination}`)
         }
 
-        console.error('[auth/callback] exchangeCodeForSession error:', error.message)
+        console.error('[auth/callback] exchangeCodeForSession failed.')
         return NextResponse.redirect(
-            `${origin}/login?error=${encodeURIComponent(error.message)}`
+            `${origin}/login?error=${encodeURIComponent('Authentication failed. Please try again.')}`
         )
     }
 

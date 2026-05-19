@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import WeekTwoQuiz from '@/components/WeekTwoQuiz'
 import CompleteButton from '@/components/CompleteButton'
+import UnlockedWeekGate from '@/components/UnlockedWeekGate'
 
 export default function WeekTwoQuizPage() {
   return (
-    <main className="min-h-screen bg-[#07090f] text-white">
+    <UnlockedWeekGate week={2}>
+      <main className="min-h-screen bg-[#07090f] text-white">
       <section className="relative overflow-hidden border-b border-white/10">
         <div className="absolute left-1/2 top-[-18rem] h-[38rem] w-[38rem] -translate-x-1/2 rounded-full bg-blue-600/20 blur-3xl" />
         <div className="absolute right-[-12rem] top-24 h-80 w-80 rounded-full bg-violet-600/20 blur-3xl" />
@@ -52,6 +54,7 @@ export default function WeekTwoQuizPage() {
           </Link>
         </div>
       </section>
-    </main>
+      </main>
+    </UnlockedWeekGate>
   )
 }
