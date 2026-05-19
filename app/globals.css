@@ -1017,6 +1017,36 @@ body {
   }
 }
 
+@keyframes iconOrbit {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dataPulse {
+  0% {
+    transform: translate(-26px, 22px) scale(0.7);
+    opacity: 0;
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(28px, -24px) scale(1.05);
+    opacity: 0;
+  }
+}
+
 .animate-fade-up {
   animation: fadeUp 0.5s ease both;
 }

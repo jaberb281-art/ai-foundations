@@ -1,9 +1,10 @@
-'use client'
-
-import { useState } from 'react'
+import type { ElementType } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import HeroBrain from '@/components/HeroBrain'
+import { getSupabasePublicConfig } from '@/lib/supabase/env'
+import { createServerClient } from '@/lib/supabase/server'
 import {
   MailWarning,
   Home,
@@ -15,7 +16,11 @@ import {
   Sparkles,
 } from 'lucide-react'
 
-type WaitlistState = 'idle' | 'loading' | 'success' | 'error'
+export const metadata: Metadata = {
+  title: 'Theory Of You Academy | AI Foundations Course',
+  description:
+    'Learn AI Foundations in a five-week practical course with lessons, self-checks, projects, and a portfolio-ready final project.',
+}
 
 const roadmap = [
   {
@@ -88,8 +93,8 @@ function AnimatedProjectIcon({
   BadgeIcon,
   index,
 }: {
-  Icon: React.ElementType
-  BadgeIcon: React.ElementType
+  Icon: ElementType
+  BadgeIcon: ElementType
   index: number
 }) {
   return (
@@ -123,45 +128,32 @@ function AnimatedProjectIcon({
   )
 }
 
-export default function HomePage() {
-  const [email, setEmail] = useState('')
-  const [state, setState] = useState<WaitlistState>('idle')
-  const [message, setMessage] = useState('')
-
-  async function joinWaitlist(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setState('loading')
-    setMessage('')
-
-    try {
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'landing_page' }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok || !data.ok) {
-        setState('error')
-        setMessage(data.message ?? 'Could not join the waitlist. Please try again.')
-        return
-      }
-
-      setState('success')
-      setMessage('You are on the founding waitlist. We will send launch and course updates.')
-      setEmail('')
-    } catch {
-      setState('error')
-      setMessage('Network error. Please try again.')
-    }
+async function getIsAuthenticated() {
+  if (!getSupabasePublicConfig()) {
+    return false
   }
+
+  const supabase = await createServerClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  return Boolean(user)
+}
+
+export default async function HomePage() {
+  const isAuthenticated = await getIsAuthenticated()
+  const heroPrimary = isAuthenticated
+    ? { label: 'Go to Dashboard', href: '/dashboard' }
+    : { label: 'Start Learning', href: '/login' }
+  const heroSecondary = isAuthenticated
+    ? { label: 'Continue Course', href: '/course' }
+    : { label: 'View Curriculum', href: '#curriculum' }
 
   return (
     <main className="min-h-screen bg-[#080a12] text-white">
       <nav className="fixed left-0 top-0 z-[100] w-full border-b border-white/10 bg-[#050711]/75 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-5">
-          {/* Logo */}
           <Link href="/" className="group flex items-center gap-3">
             <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-white/[0.04] shadow-[0_0_35px_rgba(34,211,238,0.12)]">
               <div className="absolute inset-[-5px] rounded-[1.3rem] border border-cyan-400/20 animate-spin-slow" />
@@ -188,51 +180,79 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Navigation */}
           <div className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] p-1 backdrop-blur md:flex">
-            <a
-              href="#curriculum"
-              className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
-            >
-              Curriculum
-            </a>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
+                >
+                  Dashboard
+                </Link>
 
-            <a
-              href="#projects"
-              className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
-            >
-              Projects
-            </a>
+                <Link
+                  href="/course"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
+                >
+                  Course
+                </Link>
+              </>
+            ) : (
+              <>
+                <a
+                  href="#curriculum"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
+                >
+                  Curriculum
+                </a>
 
-            <a
-              href="#waitlist"
-              className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
-            >
-              Waitlist
-            </a>
+                <a
+                  href="#projects"
+                  className="rounded-full px-4 py-2 text-sm font-medium text-white/55 transition hover:bg-white/10 hover:text-white"
+                >
+                  Projects
+                </a>
+              </>
+            )}
           </div>
 
-          {/* Actions */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="hidden text-sm font-semibold text-white/50 transition hover:text-white sm:inline"
-            >
-              Login
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="hidden text-sm font-semibold text-white/50 transition hover:text-white sm:inline md:hidden"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/course"
+                  className="hidden text-sm font-semibold text-white/50 transition hover:text-white sm:inline md:hidden"
+                >
+                  Course
+                </Link>
+                <form action="/auth/sign-out" method="post">
+                  <button
+                    type="submit"
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-white/65 transition hover:bg-white/10 hover:text-white"
+                  >
+                    Sign out
+                  </button>
+                </form>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="group relative overflow-hidden rounded-full bg-white px-5 py-2.5 text-sm font-black text-[#050711] shadow-[0_0_30px_rgba(255,255,255,0.12)] transition hover:scale-[1.03]"
+              >
+                <span className="relative z-10">Sign in</span>
 
-            <a
-              href="#waitlist"
-              className="group relative overflow-hidden rounded-full bg-white px-5 py-2.5 text-sm font-black text-[#050711] shadow-[0_0_30px_rgba(255,255,255,0.12)] transition hover:scale-[1.03]"
-            >
-              <span className="relative z-10">Join Waitlist</span>
-
-              <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-blue-200/70 to-transparent transition duration-700 group-hover:translate-x-full" />
-            </a>
+                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-blue-200/70 to-transparent transition duration-700 group-hover:translate-x-full" />
+              </Link>
+            )}
           </div>
         </div>
 
-        {/* Bottom glow line */}
         <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" />
       </nav>
 
@@ -244,7 +264,7 @@ export default function HomePage() {
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-400/25 bg-blue-500/10 px-4 py-2 text-xs font-semibold text-blue-200">
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              AI Foundations is ready for MVP learners
+              Start learning now
             </div>
 
             <h1 className="max-w-4xl text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
@@ -252,21 +272,21 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/65">
-              AI Foundations is a free 5-week practical course for learners who want to understand AI, write better prompts, build useful workflows, and finish a portfolio-ready project.
+              AI Foundations is a five-week practical course for learners who want to understand AI, write better prompts, build useful workflows, and finish a portfolio-ready project.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href="#waitlist" className="rounded-2xl bg-blue-600 px-6 py-4 text-center text-sm font-bold text-white shadow-xl shadow-blue-600/25 transition hover:bg-blue-500">
-                Get Early Access →
-              </a>
-              <a href="#curriculum" className="rounded-2xl border border-white/12 bg-white/5 px-6 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10">
-                View Curriculum
-              </a>
+              <Link href={heroPrimary.href} className="rounded-2xl bg-blue-600 px-6 py-4 text-center text-sm font-bold text-white shadow-xl shadow-blue-600/25 transition hover:bg-blue-500">
+                {heroPrimary.label}
+              </Link>
+              <Link href={heroSecondary.href} className="rounded-2xl border border-white/12 bg-white/5 px-6 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10">
+                {heroSecondary.label}
+              </Link>
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3 text-sm text-white/55">
               <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">Free forever</span>
-              <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">No credit card</span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">No credit card required</span>
               <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2">Beginner friendly</span>
             </div>
           </div>
@@ -372,79 +392,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="waitlist" className="relative border-t border-white/10 bg-[#0b0e18] py-20">
+      <section id="start" className="relative border-t border-white/10 bg-[#0b0e18] py-20">
         <div className="absolute left-1/2 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-emerald-500/10 blur-3xl" />
 
         <div className="relative mx-auto max-w-3xl px-5 text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">Early Access</p>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-emerald-300">AI Foundations</p>
           <h2 className="mt-3 text-4xl font-black tracking-tight sm:text-6xl">
-            Join the founding waitlist.
+            Start learning now.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-white/60">
-            Get launch updates, Week 1 access, project drops, and behind-the-scenes progress from Theory Of You Academy.
+            Free forever. No credit card required. Beginner friendly.
           </p>
 
-          <form onSubmit={joinWaitlist} className="mx-auto mt-8 flex max-w-xl flex-col gap-3 rounded-3xl border border-white/10 bg-white/[0.04] p-3 sm:flex-row">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="your@email.com"
-              className="min-h-14 flex-1 rounded-2xl border border-white/10 bg-[#080a12] px-5 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-blue-400"
-            />
-            <button
-              type="submit"
-              disabled={state === 'loading'}
-              className="min-h-14 rounded-2xl bg-blue-600 px-6 text-sm font-black text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {state === 'loading' ? 'Joining...' : 'Join Waitlist'}
-            </button>
-          </form>
-
-          {message && (
-            <p className={`mt-4 text-sm ${state === 'error' ? 'text-red-300' : 'text-emerald-300'}`}>
-              {message}
-            </p>
-          )}
-
-          <p className="mt-5 text-xs text-white/40">
-            No spam. No fake scarcity. Just course updates and early access.
-          </p>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link href={heroPrimary.href} className="rounded-2xl bg-blue-600 px-6 py-4 text-center text-sm font-black text-white transition hover:bg-blue-500">
+              {heroPrimary.label}
+            </Link>
+            <Link href={heroSecondary.href} className="rounded-2xl border border-white/12 bg-white/5 px-6 py-4 text-center text-sm font-bold text-white transition hover:bg-white/10">
+              {heroSecondary.label}
+            </Link>
+          </div>
         </div>
       </section>
 
       <footer className="border-t border-white/10 py-8 text-center text-sm text-white/40">
-        Built by Jaber Ali · Theory Of You Academy · AI Foundations
+        Built by Jaber Ali | Theory Of You Academy | AI Foundations
       </footer>
 
-      <style jsx global>{`
-        @keyframes iconOrbit {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @keyframes dataPulse {
-          0% {
-            transform: translate(-26px, 22px) scale(0.7);
-            opacity: 0;
-          }
-          35% {
-            opacity: 1;
-          }
-          70% {
-            opacity: 1;
-          }
-          100% {
-            transform: translate(28px, -24px) scale(1.05);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </main>
   )
 }
